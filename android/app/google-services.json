@@ -12,7 +12,20 @@
           "package_name": "com.c0d3l0v3r.odoo.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "266048603858-jmk74g9nm64840k002sjis01uatkbb09.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.c0d3l0v3r.odoo.app",
+            "certificate_hash": "22d18b5ed2976abf5b302d159311356b7ce1530d"
+          }
+        },
+        {
+          "client_id": "266048603858-4ckt4ijlb1c3i1rdr8n48qrfonre330u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDBdfJaI-BBiZE0UROHNawERkiY7Dw7T_c"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "266048603858-4ckt4ijlb1c3i1rdr8n48qrfonre330u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
