@@ -15,3 +15,12 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 # Civic-Track-Odoo-Hackur
+
+
+### Card Used : https://github.com/bernadinkele/flutter-ui-card-collections (Card 7)
+The credit for the idea of the card goes to the Github repo above and the minor tweaks using co-piolot to get the share and report options 
+
+> - Geolocator for finding the location of the person 
+> - Geocoding for the location services 
+> - Permission handler for getting and managing the permissions 
+> - Fluttertoast : Used to display the pop up reports(the hover messages like successful login)

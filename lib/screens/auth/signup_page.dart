@@ -10,6 +10,8 @@ class SignupPage extends StatefulWidget {
   State<SignupPage> createState() => _SignupPageState();
 }
 
+// *** ANIMATION CODE BY COPILOT -> JUST to enhance the Visuals ***
+
 class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -95,6 +97,9 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  // Copilot code end
+
+  // Sign Up function to store the data in the Firestore Database
   void signup() async {
     if (passwordController.text != confirmPasswordController.text) {
       Fluttertoast.showToast(msg: 'Passwords do not match');
@@ -165,6 +170,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
     }
   }
 
+  //UI for the Signup Page
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -583,6 +589,8 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
     );
   }
 
+  // *** Copilot Code Start ***
+
   Widget _buildAnimatedTextField({
     required TextEditingController controller,
     required String label,
@@ -639,3 +647,6 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
     );
   }
 }
+
+
+// *** Copilot Code End ***

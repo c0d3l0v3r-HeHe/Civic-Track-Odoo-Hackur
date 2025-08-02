@@ -43,6 +43,22 @@ dependencies:
   # UI and navigation
   fluttertoast: ^8.2.8
 
+  # dependency for the used Card Component 
+  gap: ^3.0.1
+  
+  # Image picker for camera and gallery
+  image_picker: ^1.0.7
+  
+  # Location services
+  geolocator: ^11.0.0
+  geocoding: ^3.0.0
+  
+  # Cloud Firestore for database
+  cloud_firestore: ^5.4.3
+  
+  # Permission handler
+  permission_handler: ^11.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

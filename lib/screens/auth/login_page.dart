@@ -11,6 +11,7 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
+// *** ANIMATION CODE BY COPILOT -> JUST to enhance the Visuals ***
 class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -92,6 +93,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  //*** Copilot Code End *** */
+
+  // Anonymous Sign in using only email and password
+  // login function to handle firebase auth using email and password and the firetoast to show the messages
   void login() async {
     setState(() {
       isLoading = true;
@@ -111,6 +116,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
   }
 
+  // Google Sign-In function
+  // sign in with Google using the Google Sign-In package
   Future<void> signInWithGoogle() async {
     setState(() {
       isGoogleLoading = true;
@@ -150,6 +157,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
   }
 
+  // UI for the Login Page
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -510,6 +518,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
+  // *** ANIMATION CODE BY COPILOT -> JUST to enhance the Visuals ***
+
   Widget _buildAnimatedTextField({
     required TextEditingController controller,
     required String label,
@@ -549,3 +559,5 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 }
+
+// *** Copilot Code End *** */
