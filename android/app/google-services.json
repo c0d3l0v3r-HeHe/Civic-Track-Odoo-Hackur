@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "266048603858",
+    "project_id": "civic-hero-odoo-hakur",
+    "storage_bucket": "civic-hero-odoo-hakur.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:266048603858:android:ccbf304fedb57c35558f0b",
+        "android_client_info": {
+          "package_name": "com.c0d3l0v3r.odoo.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBdfJaI-BBiZE0UROHNawERkiY7Dw7T_c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
