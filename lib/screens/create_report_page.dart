@@ -177,7 +177,9 @@ class _CreateReportPageState extends State<CreateReportPage> {
         onTimeout: () {
           // Even if it times out, the report might still be created
           // So we'll show a different message
-          throw TimeoutException('Report submission is taking longer than expected. Please check the home page to verify if your report was created.');
+          throw TimeoutException(
+            'Report submission is taking longer than expected. Please check the home page to verify if your report was created.',
+          );
         },
       );
 

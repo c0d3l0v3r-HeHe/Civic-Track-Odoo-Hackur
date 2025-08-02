@@ -124,6 +124,18 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         actions: [
           IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () async {
+              await _loadReports();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Refreshed: Found ${_reports.length} reports'),
+                  backgroundColor: Colors.blue,
+                ),
+              );
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
