@@ -24,3 +24,6 @@ The credit for the idea of the card goes to the Github repo above and the minor 
 > - Geocoding for the location services 
 > - Permission handler for getting and managing the permissions 
 > - Fluttertoast : Used to display the pop up reports(the hover messages like successful login)
+
+
+For Models used and the DB structure you can read the MODELS_README.md Which gives a better idea of how the models are and what i thought while making them 

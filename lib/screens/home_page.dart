@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'create_report_page.dart';
 import '../services/location_service.dart';
 import '../services/report_service.dart';
@@ -431,10 +433,262 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _handleShare(Report report) {
-    // TODO: Implement share functionality
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Share feature coming soon!')));
+    _showShareOptions(report);
+  }
+
+  void _showShareOptions(Report report) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                const Icon(Icons.share, color: Color(0xFF667eea)),
+                const SizedBox(width: 12),
+                const Text(
+                  'Share Report',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // Share message preview
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey[200]!),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '🚨 Civic Issue Report',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    report.title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Category: ${report.category.displayName}',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                  if (report.location != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      'Location: ${report.location}',
+                      style: TextStyle(color: Colors.grey[600]),
+                    ),
+                  ],
+                  const SizedBox(height: 8),
+                  Text(
+                    'Help resolve this issue in our community! 📍',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Share options
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildShareOption(
+                  icon: Icons.share,
+                  label: 'General',
+                  color: const Color(0xFF667eea),
+                  onTap: () => _shareGeneral(report),
+                ),
+                _buildShareOption(
+                  icon: Icons.message,
+                  label: 'WhatsApp',
+                  color: const Color(0xFF25D366),
+                  onTap: () => _shareToWhatsApp(report),
+                ),
+                _buildShareOption(
+                  icon: Icons.email,
+                  label: 'Email',
+                  color: const Color(0xFFEA4335),
+                  onTap: () => _shareToEmail(report),
+                ),
+                _buildShareOption(
+                  icon: Icons.copy,
+                  label: 'Copy Link',
+                  color: const Color(0xFF666666),
+                  onTap: () => _copyToClipboard(report),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShareOption({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: color.withOpacity(0.2)),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[700],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _generateShareMessage(Report report) {
+    return '''🚨 Civic Issue Report
+
+${report.title}
+
+Category: ${report.category.displayName}
+${report.location != null ? 'Location: ${report.location}\n' : ''}
+Status: ${report.status.displayName}
+
+${report.description}
+
+Help resolve this issue in our community! 📍
+
+Reported via CivicTrack App''';
+  }
+
+  void _shareGeneral(Report report) async {
+    Navigator.pop(context);
+    try {
+      await Share.share(
+        _generateShareMessage(report),
+        subject: '🚨 Civic Issue: ${report.title}',
+      );
+    } catch (e) {
+      _showErrorSnackBar('Failed to share: \$e');
+    }
+  }
+
+  void _shareToWhatsApp(Report report) async {
+    Navigator.pop(context);
+    try {
+      final message = Uri.encodeComponent(_generateShareMessage(report));
+      final whatsappUrl = 'whatsapp://send?text=$message';
+
+      if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
+        await launchUrl(Uri.parse(whatsappUrl));
+      } else {
+        // Fallback to web WhatsApp
+        final webWhatsappUrl = 'https://api.whatsapp.com/send?text=$message';
+        if (await canLaunchUrl(Uri.parse(webWhatsappUrl))) {
+          await launchUrl(Uri.parse(webWhatsappUrl));
+        } else {
+          _showErrorSnackBar('WhatsApp is not installed');
+        }
+      }
+    } catch (e) {
+      _showErrorSnackBar('Failed to share to WhatsApp: $e');
+    }
+  }
+
+  void _shareToEmail(Report report) async {
+    Navigator.pop(context);
+    try {
+      final subject = Uri.encodeComponent('🚨 Civic Issue: ${report.title}');
+      final body = Uri.encodeComponent(_generateShareMessage(report));
+      final emailUrl = 'mailto:?subject=$subject&body=$body';
+
+      if (await canLaunchUrl(Uri.parse(emailUrl))) {
+        await launchUrl(Uri.parse(emailUrl));
+      } else {
+        _showErrorSnackBar('No email app found');
+      }
+    } catch (e) {
+      _showErrorSnackBar('Failed to share via email: $e');
+    }
+  }
+
+  void _copyToClipboard(Report report) async {
+    Navigator.pop(context);
+    try {
+      await Share.share(
+        _generateShareMessage(report),
+        subject: '🚨 Civic Issue: ${report.title}',
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Report details copied to clipboard!'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      _showErrorSnackBar('Failed to copy: $e');
+    }
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   void _handleReport(Report report) {

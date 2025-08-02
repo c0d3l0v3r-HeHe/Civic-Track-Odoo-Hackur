@@ -1,16 +1,66 @@
 import 'package:flutter/material.dart';
 
 enum ReportStatus {
-  submitted('Submitted', 'Report has been submitted and is pending review', Icons.send, Color(0xFF9E9E9E)),
-  underReview('Under Review', 'Report is being reviewed by administrators', Icons.visibility, Color(0xFFFF9800)),
-  investigating('Investigating', 'Issue is being investigated by relevant authorities', Icons.search, Color(0xFF2196F3)),
-  inProgress('In Progress', 'Work has started to address the issue', Icons.construction, Color(0xFFFFB347)),
-  resolved('Resolved', 'Issue has been successfully resolved', Icons.check_circle, Color(0xFF4CAF50)),
-  rejected('Rejected', 'Report was rejected after review', Icons.cancel, Color(0xFFFF5722)),
-  duplicate('Duplicate', 'This issue has already been reported', Icons.content_copy, Color(0xFF795548)),
-  needsMoreInfo('Needs More Info', 'Additional information required from reporter', Icons.info, Color(0xFF9C27B0)),
-  escalated('Escalated', 'Issue has been escalated to higher authorities', Icons.trending_up, Color(0xFFE91E63)),
-  onHold('On Hold', 'Issue resolution is temporarily on hold', Icons.pause, Color(0xFF607D8B));
+  submitted(
+    'Submitted',
+    'Report has been submitted and is pending review',
+    Icons.send,
+    Color(0xFF9E9E9E),
+  ),
+  underReview(
+    'Under Review',
+    'Report is being reviewed by administrators',
+    Icons.visibility,
+    Color(0xFFFF9800),
+  ),
+  investigating(
+    'Investigating',
+    'Issue is being investigated by relevant authorities',
+    Icons.search,
+    Color(0xFF2196F3),
+  ),
+  inProgress(
+    'In Progress',
+    'Work has started to address the issue',
+    Icons.construction,
+    Color(0xFFFFB347),
+  ),
+  resolved(
+    'Resolved',
+    'Issue has been successfully resolved',
+    Icons.check_circle,
+    Color(0xFF4CAF50),
+  ),
+  rejected(
+    'Rejected',
+    'Report was rejected after review',
+    Icons.cancel,
+    Color(0xFFFF5722),
+  ),
+  duplicate(
+    'Duplicate',
+    'This issue has already been reported',
+    Icons.content_copy,
+    Color(0xFF795548),
+  ),
+  needsMoreInfo(
+    'Needs More Info',
+    'Additional information required from reporter',
+    Icons.info,
+    Color(0xFF9C27B0),
+  ),
+  escalated(
+    'Escalated',
+    'Issue has been escalated to higher authorities',
+    Icons.trending_up,
+    Color(0xFFE91E63),
+  ),
+  onHold(
+    'On Hold',
+    'Issue resolution is temporarily on hold',
+    Icons.pause,
+    Color(0xFF607D8B),
+  );
 
   const ReportStatus(this.displayName, this.description, this.icon, this.color);
 
@@ -74,10 +124,7 @@ enum ReportStatus {
 
   // Check if status is negative (bad outcome)
   bool get isNegative {
-    return [
-      ReportStatus.rejected,
-      ReportStatus.duplicate,
-    ].contains(this);
+    return [ReportStatus.rejected, ReportStatus.duplicate].contains(this);
   }
 
   // Get light version of the color for backgrounds

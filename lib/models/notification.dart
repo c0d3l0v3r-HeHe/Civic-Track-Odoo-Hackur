@@ -57,7 +57,8 @@ class ReportNotification {
       reportTitle: reportTitle,
       type: NotificationType.statusUpdate,
       title: 'Report Status Updated',
-      message: 'Your report "$reportTitle" status changed from ${fromStatus.displayName} to ${toStatus.displayName}${adminNotes != null ? '\n\nAdmin notes: $adminNotes' : ''}',
+      message:
+          'Your report "$reportTitle" status changed from ${fromStatus.displayName} to ${toStatus.displayName}${adminNotes != null ? '\n\nAdmin notes: $adminNotes' : ''}',
       timestamp: DateTime.now(),
       data: {
         'fromStatus': fromStatus.name,
@@ -84,12 +85,10 @@ class ReportNotification {
       reportTitle: reportTitle,
       type: NotificationType.resolution,
       title: 'Report Resolved',
-      message: 'Great news! Your report "$reportTitle" has been resolved by $resolvedByName.${resolutionNotes != null ? '\n\nResolution details: $resolutionNotes' : ''}',
+      message:
+          'Great news! Your report "$reportTitle" has been resolved by $resolvedByName.${resolutionNotes != null ? '\n\nResolution details: $resolutionNotes' : ''}',
       timestamp: DateTime.now(),
-      data: {
-        'resolvedBy': resolvedByName,
-        'resolutionNotes': resolutionNotes,
-      },
+      data: {'resolvedBy': resolvedByName, 'resolutionNotes': resolutionNotes},
     );
   }
 
@@ -109,7 +108,8 @@ class ReportNotification {
       reportTitle: reportTitle,
       type: NotificationType.escalation,
       title: 'Report Escalated',
-      message: 'Your report "$reportTitle" has been escalated to higher authorities by $escalatedByName for faster resolution.${escalationReason != null ? '\n\nReason: $escalationReason' : ''}',
+      message:
+          'Your report "$reportTitle" has been escalated to higher authorities by $escalatedByName for faster resolution.${escalationReason != null ? '\n\nReason: $escalationReason' : ''}',
       timestamp: DateTime.now(),
       data: {
         'escalatedBy': escalatedByName,
@@ -168,9 +168,7 @@ class ReportNotification {
       userId: json['userId'],
       reportId: json['reportId'],
       reportTitle: json['reportTitle'],
-      type: NotificationType.values.firstWhere(
-        (e) => e.name == json['type'],
-      ),
+      type: NotificationType.values.firstWhere((e) => e.name == json['type']),
       title: json['title'],
       message: json['message'],
       timestamp: DateTime.parse(json['timestamp']),

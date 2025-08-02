@@ -127,9 +127,7 @@ class Report {
       category: IssueCategory.values.firstWhere(
         (e) => e.name == json['category'],
       ),
-      status: ReportStatus.values.firstWhere(
-        (e) => e.name == json['status'],
-      ),
+      status: ReportStatus.values.firstWhere((e) => e.name == json['status']),
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
       location: json['location'],

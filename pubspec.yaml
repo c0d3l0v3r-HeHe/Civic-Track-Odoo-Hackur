@@ -58,6 +58,10 @@ dependencies:
   
   # Permission handler
   permission_handler: ^11.1.0
+  
+  # Share functionality
+  share_plus: ^11.0.0
+  url_launcher: ^6.2.5
 
 dev_dependencies:
   flutter_test:

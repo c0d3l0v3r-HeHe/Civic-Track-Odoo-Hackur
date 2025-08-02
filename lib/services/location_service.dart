@@ -14,16 +14,16 @@ class LocationService {
 
       // Request permission using permission_handler for better control
       PermissionStatus permission = await Permission.location.request();
-      
+
       if (permission.isGranted) {
         return true;
       } else if (permission.isDenied) {
         // Try requesting again with geolocator
         LocationPermission geoPermission = await Geolocator.requestPermission();
-        return geoPermission == LocationPermission.whileInUse || 
-               geoPermission == LocationPermission.always;
+        return geoPermission == LocationPermission.whileInUse ||
+            geoPermission == LocationPermission.always;
       }
-      
+
       return false;
     } catch (e) {
       print('Error requesting location permission: $e');
@@ -50,16 +50,22 @@ class LocationService {
   }
 
   // Get address from coordinates
-  static Future<String?> getAddressFromCoordinates(double latitude, double longitude) async {
+  static Future<String?> getAddressFromCoordinates(
+    double latitude,
+    double longitude,
+  ) async {
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
-      
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        latitude,
+        longitude,
+      );
+
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks[0];
-        
+
         // Build address string
         List<String> addressParts = [];
-        
+
         if (place.street != null && place.street!.isNotEmpty) {
           addressParts.add(place.street!);
         }
@@ -69,13 +75,14 @@ class LocationService {
         if (place.locality != null && place.locality!.isNotEmpty) {
           addressParts.add(place.locality!);
         }
-        if (place.administrativeArea != null && place.administrativeArea!.isNotEmpty) {
+        if (place.administrativeArea != null &&
+            place.administrativeArea!.isNotEmpty) {
           addressParts.add(place.administrativeArea!);
         }
-        
+
         return addressParts.join(', ');
       }
-      
+
       return null;
     } catch (e) {
       print('Error getting address from coordinates: $e');
@@ -87,7 +94,7 @@ class LocationService {
   static Future<Position?> getCoordinatesFromAddress(String address) async {
     try {
       List<Location> locations = await locationFromAddress(address);
-      
+
       if (locations.isNotEmpty) {
         Location location = locations[0];
         return Position(
@@ -103,7 +110,7 @@ class LocationService {
           speedAccuracy: 0,
         );
       }
-      
+
       return null;
     } catch (e) {
       print('Error getting coordinates from address: $e');
@@ -119,11 +126,12 @@ class LocationService {
     double endLongitude,
   ) {
     return Geolocator.distanceBetween(
-      startLatitude,
-      startLongitude,
-      endLatitude,
-      endLongitude,
-    ) / 1000; // Convert to kilometers
+          startLatitude,
+          startLongitude,
+          endLatitude,
+          endLongitude,
+        ) /
+        1000; // Convert to kilometers
   }
 
   // Get location info for display

@@ -129,7 +129,7 @@ class CivicCard extends StatelessWidget {
                         letterSpacing: -0.56,
                       ),
                     ),
-                    
+
                     // Post Image (if provided)
                     if (postImageUrl != null) ...[
                       const Gap(12),
@@ -158,7 +158,7 @@ class CivicCard extends StatelessWidget {
                         ),
                       ),
                     ],
-                    
+
                     const Gap(16),
                     // Engagement Row
                     Row(
