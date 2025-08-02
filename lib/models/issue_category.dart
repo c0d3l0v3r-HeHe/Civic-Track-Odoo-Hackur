@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+// Enum Class to represent different issue categories
+// Each category has a display name, description, icon, and color
+// This can be used for categorizing issues in the app
+// all the issue categories are added here for ease of use and for better Modularity
 enum IssueCategory {
   roads('Roads', 'Potholes, obstructions', Icons.route, Color(0xFF667eea)),
   lighting(

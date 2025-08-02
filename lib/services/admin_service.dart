@@ -68,13 +68,40 @@ class AdminService {
   // Get flagged/reported reports
   static Future<List<Map<String, dynamic>>> getFlaggedReports() async {
     try {
+      print('Fetching flagged reports...');
       final query = await _firestore
           .collection('reports')
           .where('isFlagged', isEqualTo: true)
-          .orderBy('updatedAt', descending: true)
           .get();
 
-      return query.docs.map((doc) => {'id': doc.id, ...doc.data()}).toList();
+      print('Found ${query.docs.length} flagged reports');
+
+      // Sort by flaggedAt or updatedAt in code instead of in the query
+      final docs = query.docs
+          .map((doc) => {'id': doc.id, ...doc.data()})
+          .toList();
+
+      // Sort by flaggedAt timestamp (most recent first)
+      docs.sort((a, b) {
+        final aTime = a['flaggedAt'] as Timestamp?;
+        final bTime = b['flaggedAt'] as Timestamp?;
+        if (aTime == null && bTime == null) return 0;
+        if (aTime == null) return 1;
+        if (bTime == null) return -1;
+        return bTime.compareTo(aTime);
+      });
+
+      print('Returning ${docs.length} flagged reports');
+
+      // Debug: Print details of flagged reports
+      for (int i = 0; i < docs.length; i++) {
+        final doc = docs[i];
+        print(
+          'Flagged Report $i: ${doc['id']} - ${doc['title']} - Reason: ${doc['flagReason']}',
+        );
+      }
+
+      return docs;
     } catch (e) {
       print('Error fetching flagged reports: $e');
       return [];

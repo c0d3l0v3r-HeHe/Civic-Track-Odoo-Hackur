@@ -171,6 +171,32 @@ class _AdminDashboardState extends State<AdminDashboard> {
     }
   }
 
+  Future<void> _toggleReportVisibility(String reportId, bool hidden) async {
+    try {
+      await AdminService.toggleReportVisibility(reportId, hidden);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            hidden
+                ? 'Report hidden successfully'
+                : 'Report made visible successfully',
+          ),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      _loadFlaggedReports(); // Refresh the list
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error updating report visibility: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
@@ -465,7 +491,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
           const Gap(16),
 
-          // Action buttons
+          // Action buttons with 3-dot menu
           Row(
             children: [
               // Status change dropdown
@@ -551,32 +577,68 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
               const Gap(8),
 
-              // Ban user button
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => _banUser(reportId, reporterUserId, reporterName),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+              // 3-dot menu for additional actions
+              PopupMenuButton<String>(
+                icon: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[700],
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Icon(
+                    Icons.more_vert,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ),
+                onSelected: (action) {
+                  switch (action) {
+                    case 'ban_user':
+                      _banUser(reportId, reporterUserId, reporterName);
+                      break;
+                    case 'hide_report':
+                      _toggleReportVisibility(reportId, true);
+                      break;
+                    case 'unhide_report':
+                      _toggleReportVisibility(reportId, false);
+                      break;
+                  }
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'ban_user',
+                    child: Row(
                       children: [
-                        Icon(Icons.block, color: Colors.white, size: 16),
-                        Gap(4),
-                        Text(
-                          'Ban User',
-                          style: TextStyle(color: Colors.white, fontSize: 12),
-                        ),
+                        Icon(Icons.block, color: Colors.red, size: 16),
+                        Gap(8),
+                        Text('Ban User', style: TextStyle(color: Colors.red)),
                       ],
                     ),
                   ),
-                ),
+                  const PopupMenuItem(
+                    value: 'hide_report',
+                    child: Row(
+                      children: [
+                        Icon(Icons.visibility_off, size: 16),
+                        Gap(8),
+                        Text('Hide Report'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: 'unhide_report',
+                    child: Row(
+                      children: [
+                        Icon(Icons.visibility, size: 16),
+                        Gap(8),
+                        Text('Unhide Report'),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

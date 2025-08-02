@@ -27,3 +27,11 @@ The credit for the idea of the card goes to the Github repo above and the minor 
 
 
 For Models used and the DB structure you can read the MODELS_README.md Which gives a better idea of how the models are and what i thought while making them 
+
+
+Admin email ID : -
+admin@civictrack.com
+moderator@civictrack.com
+Admin Password: 
+1234567
+1234567

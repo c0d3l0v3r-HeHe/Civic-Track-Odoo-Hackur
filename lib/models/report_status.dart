@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Enum to represent different report statuses
+// Each status has a display name, description, icon, and color
+// This can be used to manage the lifecycle of reports in the system
 enum ReportStatus {
   submitted(
     'Submitted',

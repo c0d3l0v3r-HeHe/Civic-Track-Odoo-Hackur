@@ -58,7 +58,11 @@ class ReportService {
         downvotedBy: [],
       );
 
-      await docRef.set(report.toJson());
+      final reportData = report.toJson();
+      reportData['isFlagged'] =
+          false; // Explicitly set isFlagged to false for new reports
+
+      await docRef.set(reportData);
       return docRef.id;
     } catch (e) {
       throw Exception('Failed to create report: $e');
@@ -87,7 +91,14 @@ class ReportService {
       final reports = <Report>[];
       for (final doc in query.docs) {
         try {
-          final report = Report.fromJson({...doc.data(), 'id': doc.id});
+          final data = doc.data();
+
+          // Skip flagged reports
+          if (data['isFlagged'] == true) {
+            continue;
+          }
+
+          final report = Report.fromJson({...data, 'id': doc.id});
 
           // Double-check with more precise distance calculation
           final distance = _calculateDistance(
@@ -117,6 +128,8 @@ class ReportService {
       print('Fetching all reports from Firestore...');
       final query = await _firestore
           .collection(_collection)
+          .where('isFlagged', isNotEqualTo: true) // Filter out flagged reports
+          .orderBy('isFlagged') // Required for inequality filter
           .orderBy('createdAt', descending: true)
           .get();
 
@@ -324,6 +337,48 @@ class ReportService {
       }
     } catch (e) {
       print('Error creating sample reports: $e');
+    }
+  }
+
+  // Flag a report as inappropriate
+  static Future<void> flagReport({
+    required String reportId,
+    required String reason,
+  }) async {
+    try {
+      print('Flagging report: $reportId with reason: $reason');
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+
+      final now = DateTime.now();
+
+      // Add to flagged reports collection
+      await _firestore.collection('flagged_reports').doc(reportId).set({
+        'reportId': reportId,
+        'flaggedBy': user.uid,
+        'flaggedByName':
+            user.displayName ?? user.email?.split('@')[0] ?? 'Anonymous',
+        'flagReason': reason,
+        'flaggedAt': Timestamp.fromDate(now),
+      });
+
+      print('Added to flagged_reports collection');
+
+      // Update the report document to mark it as flagged
+      await _firestore.collection(_collection).doc(reportId).update({
+        'isFlagged': true,
+        'flagReason': reason,
+        'flaggedAt': Timestamp.fromDate(now),
+        'flaggedBy': user.uid,
+        'updatedAt': Timestamp.fromDate(
+          now,
+        ), // Add this line to update the timestamp
+      });
+
+      print('Updated report document with isFlagged: true');
+    } catch (e) {
+      print('Error flagging report: $e');
+      rethrow;
     }
   }
 }

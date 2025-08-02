@@ -193,6 +193,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: "report_button",
         onPressed: () async {
           final result = await Navigator.push(
             context,
@@ -692,12 +693,182 @@ Reported via CivicTrack App''';
   }
 
   void _handleReport(Report report) {
-    // TODO: Implement report functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Report submitted to administrators'),
-        backgroundColor: Colors.red,
+    _showReportDialog(report);
+  }
+
+  void _showReportDialog(Report report) {
+    String? selectedReason;
+    final TextEditingController customReasonController =
+        TextEditingController();
+
+    final reportReasons = [
+      'Inappropriate content',
+      'Spam or fake report',
+      'Misleading information',
+      'Offensive language',
+      'Duplicate report',
+      'Other',
+    ];
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.flag, color: Colors.red[600], size: 24),
+              const SizedBox(width: 8),
+              const Text('Report Issue'),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Why are you reporting "${report.title}"?',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Report reasons
+              Column(
+                children: reportReasons
+                    .map(
+                      (reason) => RadioListTile<String>(
+                        title: Text(reason),
+                        value: reason,
+                        groupValue: selectedReason,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedReason = value;
+                          });
+                        },
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
+                      ),
+                    )
+                    .toList(),
+              ),
+
+              // Custom reason input (only show if "Other" is selected)
+              if (selectedReason == 'Other') ...[
+                const SizedBox(height: 12),
+                TextField(
+                  controller: customReasonController,
+                  decoration: const InputDecoration(
+                    labelText: 'Please specify',
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                  maxLines: 2,
+                ),
+              ],
+
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.orange[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.orange[200]!),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      color: Colors.orange[600],
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'This will be reviewed by our administrators',
+                        style: TextStyle(
+                          color: Colors.orange[800],
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: selectedReason == null
+                  ? null
+                  : () {
+                      String finalReason = selectedReason!;
+                      if (selectedReason == 'Other' &&
+                          customReasonController.text.trim().isNotEmpty) {
+                        finalReason = customReasonController.text.trim();
+                      } else if (selectedReason == 'Other') {
+                        // Don't allow submitting "Other" without custom reason
+                        return;
+                      }
+
+                      Navigator.pop(context);
+                      _submitReport(report, finalReason);
+                    },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red[600],
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Submit Report'),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  Future<void> _submitReport(Report report, String reason) async {
+    try {
+      await ReportService.flagReport(reportId: report.id, reason: reason);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white, size: 20),
+              const SizedBox(width: 8),
+              const Expanded(
+                child: Text(
+                  'Report submitted successfully. Thank you for helping keep our community safe.',
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.green[600],
+          duration: const Duration(seconds: 4),
+        ),
+      );
+
+      // Refresh reports to potentially hide the flagged report
+      await _loadReports();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error, color: Colors.white, size: 20),
+              const SizedBox(width: 8),
+              Expanded(child: Text('Failed to submit report: $e')),
+            ],
+          ),
+          backgroundColor: Colors.red[600],
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
   }
 }
